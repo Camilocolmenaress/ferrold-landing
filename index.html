@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FERROLD — La cava que sí pensaron</title>
+  <!-- CDN preview. En producción: @font-face con archivos locales de /MARCA FERROLD/FUENTES/ -->
+  <style>
+    @font-face { font-family: 'Bebas Neue'; src: url('./assets/fonts/BebasNeue-Regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+    @font-face { font-family: 'Barlow Condensed'; src: url('./assets/fonts/BarlowCondensed-SemiBold.ttf') format('truetype'); font-weight: 600; font-display: swap; }
+    @font-face { font-family: 'Barlow Condensed'; src: url('./assets/fonts/BarlowCondensed-SemiBold.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+    @font-face { font-family: 'Space Grotesk'; src: url('./assets/fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+  </style>
+  <style>
+    /* ── VARIABLES & RESET ─────────────────────────────── */
+    :root {
+      --negro: #111111;
+      --blanco: #F1EFE8;
+      --oxido: #8B4513;
+      --wa: #25D366;
+      --expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--negro);
+      color: var(--blanco);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 400;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── GRAIN ─────────────────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.04;
+      mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ── CURSOR (desktop) ──────────────────────────────── */
+    @media (hover: hover) { body, a, button { cursor: none; } }
+    .cursor {
+      display: none;
+      position: fixed;
+      width: 7px; height: 7px;
+      background: var(--oxido);
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s var(--expo), height 0.2s var(--expo), background 0.2s, border 0.2s;
+    }
+    @media (hover: hover) { .cursor { display: block; } }
+    .cursor.hover {
+      width: 28px; height: 28px;
+      background: transparent;
+      border: 1.5px solid var(--oxido);
+    }
+
+    /* ── HERO ──────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
+    .hero__bg {
+      position: absolute;
+      inset: 0;
+      background: #0c0c0c url('./assets/images/ferrold-hero.jpg') center center / cover no-repeat;
+      will-change: transform;
+    }
+    .hero__bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+    }
+    .hero__fade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 0%, transparent 20%, rgba(17,17,17,0.5) 52%, #111 78%);
+    }
+    .hero__content {
+      position: relative;
+      z-index: 2;
+      padding: 0 24px 44px;
+    }
+
+    /* kicker con serial */
+    .hero__kicker {
+      font-size: 11px;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--oxido);
+      margin-bottom: 10px;
+      opacity: 0;
+      animation: fadeUp 0.6s var(--expo) forwards 0.1s;
+    }
+    #serial-num { font-variant-numeric: tabular-nums; }
+
+    /* rule animada */
+    .hero__rule {
+      width: 36px; height: 2px;
+      background: var(--oxido);
+      margin-bottom: 14px;
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: scaleX 0.5s var(--expo) forwards 0.4s;
+    }
+
+    /* wordmark letra a letra */
+    .hero__wordmark {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(80px, 24vw, 200px);
+      line-height: 0.82;
+      letter-spacing: 0.05em;
+      color: var(--blanco);
+      position: relative;
+      display: inline-block;
+    }
+    .hero__wordmark .l {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(24px);
+      animation: letterUp 0.45s var(--expo) forwards;
+    }
+    .hero__wordmark .l:nth-child(1) { animation-delay: 0.45s; }
+    .hero__wordmark .l:nth-child(2) { animation-delay: 0.52s; }
+    .hero__wordmark .l:nth-child(3) { animation-delay: 0.59s; }
+    .hero__wordmark .l:nth-child(4) { animation-delay: 0.66s; }
+    .hero__wordmark .l:nth-child(5) { animation-delay: 0.73s; }
+    .hero__wordmark .l:nth-child(6) { animation-delay: 0.80s; }
+    .hero__wordmark .l:nth-child(7) { animation-delay: 0.87s; }
+
+    /* glitch en wordmark (se dispara cada ~6s) */
+    .hero__wordmark::before,
+    .hero__wordmark::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: inherit;
+      letter-spacing: inherit;
+      line-height: inherit;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .hero__wordmark::before {
+      color: var(--oxido);
+      animation: glitchA 7s ease-in-out infinite 2.5s;
+    }
+    .hero__wordmark::after {
+      color: #1c6a87;
+      animation: glitchB 7s ease-in-out infinite 2.6s;
+    }
+
+    .hero__tagline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(17px, 4vw, 26px);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--oxido);
+      margin-top: 10px;
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: fadeUp 0.6s var(--expo) forwards 1s;
+    }
+
+    /* botón con fill wipe */
+    .btn-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1.5px solid rgba(241,239,232,0.45);
+      color: var(--blanco);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 13px 22px;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeUp 0.6s var(--expo) forwards 1.15s;
+      transition: border-color 0.25s;
+    }
+    .btn-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--blanco);
+      transform: translateX(-101%);
+      transition: transform 0.35s var(--expo);
+    }
+    .btn-hero:hover::before { transform: translateX(0); }
+    .btn-hero:hover { border-color: var(--blanco); }
+    .btn-hero span, .btn-hero svg { position: relative; z-index: 1; }
+    .btn-hero:hover span { color: var(--negro); }
+    .btn-hero svg { width: 17px; height: 17px; flex-shrink: 0; transition: fill 0.3s; }
+    .btn-hero:hover svg { fill: var(--negro); }
+    .btn-hero span { transition: color 0.3s; }
+
+    /* scroll hint */
+    .scroll-hint {
+      position: absolute;
+      bottom: 28px; right: 24px;
+      z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease forwards 1.7s;
+    }
+    .scroll-hint span {
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #333;
+      writing-mode: vertical-rl;
+    }
+    .scroll-hint__bar {
+      width: 1px; height: 36px;
+      background: #222;
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-hint__bar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--oxido);
+      animation: scrollBar 1.8s ease-in-out infinite 1.8s;
+    }
+
+    /* ── SECTION COMMONS ───────────────────────────────── */
+    .sec-label {
+      font-size: 10px;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--oxido);
+      margin-bottom: 14px;
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .sec-rule {
+      width: 28px; height: 2px;
+      background: var(--oxido);
+      margin-bottom: 28px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.55s var(--expo) 0.1s;
+    }
+    .sec-label.in { opacity: 1; transform: none; }
+    .sec-rule.in  { transform: scaleX(1); }
+
+    /* ── STORY ─────────────────────────────────────────── */
+    .story {
+      padding: 80px 24px;
+      border-top: 1px solid #1c1c1c;
+    }
+    .story__headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 13vw, 96px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    /* each line slides up from inside clipped container */
+    .story__headline .line {
+      display: block;
+      transform: translateY(110%);
+      transition: transform 0.7s var(--expo);
+    }
+    .story__headline.in .line:nth-child(1) { transform: none; transition-delay: 0.08s; }
+    .story__headline.in .line:nth-child(2) { transform: none; transition-delay: 0.18s; }
+    .story__headline.in .line:nth-child(3) { transform: none; transition-delay: 0.28s; }
+    .story__body {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(15px, 2.2vw, 18px);
+      line-height: 1.7;
+      color: #7a7a72;
+      max-width: 500px;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.7s ease 0.4s, transform 0.7s ease 0.4s;
+    }
+    .story__body.in { opacity: 1; transform: none; }
+    .story__body strong { color: var(--blanco); font-weight: 600; }
+
+    /* ── DETAILS ───────────────────────────────────────── */
+    .details {
+      background: #0d0d0d;
+      border-top: 1px solid #1c1c1c;
+      border-bottom: 1px solid #1c1c1c;
+    }
+    .details__header { padding: 64px 24px 28px; }
+    .details__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: #1c1c1c;
+    }
+    .detail-cell {
+      background: #0d0d0d;
+      aspect-ratio: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 18px;
+      opacity: 0;
+      transform: scale(0.96);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .detail-cell.in { opacity: 1; transform: none; }
+    .detail-cell:nth-child(1).in { transition-delay: 0.04s; }
+    .detail-cell:nth-child(2).in { transition-delay: 0.1s; }
+    .detail-cell:nth-child(3).in { transition-delay: 0.16s; }
+    .detail-cell:nth-child(4).in { transition-delay: 0.22s; }
+
+    .detail-cell__img {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #171717, #1e1e1e);
+      overflow: hidden;
+      transition: transform 0.5s var(--expo);
+    }
+    .detail-cell__img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 0.5s var(--expo);
+    }
+    .detail-cell:hover .detail-cell__img img { transform: scale(1.07); }
+
+    .detail-cell::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(13,13,13,0.92) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .detail-cell__label {
+      position: relative; z-index: 1;
+      font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase;
+      color: var(--oxido); margin-bottom: 4px;
+      transform: translateY(5px);
+      opacity: 0.5;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .detail-cell:hover .detail-cell__label { transform: none; opacity: 1; }
+    .detail-cell__name {
+      position: relative; z-index: 1;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px; letter-spacing: 0.06em; color: var(--blanco);
+      transform: translateY(3px);
+      transition: transform 0.3s ease;
+    }
+    .detail-cell:hover .detail-cell__name { transform: none; }
+
+    /* ── PROCESS ───────────────────────────────────────── */
+    .process { padding: 80px 24px; border-top: 1px solid #1c1c1c; }
+    .steps { margin-top: 32px; }
+    .step {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 22px;
+      padding: 24px 0;
+      border-bottom: 1px solid #1c1c1c;
+      align-items: start;
+      opacity: 0;
+      transform: translateX(-14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .step:first-child { border-top: 1px solid #1c1c1c; }
+    .step.in { opacity: 1; transform: none; }
+    .step:nth-child(1).in { transition-delay: 0s; }
+    .step:nth-child(2).in { transition-delay: 0.1s; }
+    .step:nth-child(3).in { transition-delay: 0.2s; }
+
+    /* número con clip-path reveal */
+    .step__num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 40px; color: var(--oxido); line-height: 1; opacity: 0.65;
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0.55s var(--expo) 0.25s;
+    }
+    .step.in .step__num { clip-path: inset(0 0% 0 0); }
+    .step__title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--blanco); margin-bottom: 6px;
+    }
+    .step__desc {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; line-height: 1.6; color: #666;
+    }
+
+    /* ── PRICING ───────────────────────────────────────── */
+    .pricing {
+      padding: 80px 24px;
+      background: #0d0d0d;
+      border-top: 1px solid #1c1c1c;
+      text-align: center;
+    }
+    .pricing .sec-rule { margin: 0 auto 28px; }
+    .pricing__currency {
+      font-size: 12px; letter-spacing: 0.4em; text-transform: uppercase;
+      color: var(--oxido); margin-bottom: 4px;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.1s;
+    }
+    .pricing.in .pricing__currency { opacity: 1; }
+
+    /* precio: cada carácter sube como slot machine */
+    .pricing__amount {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(64px, 18vw, 140px);
+      letter-spacing: 0.02em; line-height: 1;
+      color: var(--blanco); margin-bottom: 6px;
+      overflow: hidden;
+    }
+    .pricing__amount .ch {
+      display: inline-block;
+      transform: translateY(110%);
+      transition: transform 0.6s var(--expo);
+    }
+    .pricing.in .pricing__amount .ch:nth-child(1) { transform: none; transition-delay: 0.10s; }
+    .pricing.in .pricing__amount .ch:nth-child(2) { transform: none; transition-delay: 0.17s; }
+    .pricing.in .pricing__amount .ch:nth-child(3) { transform: none; transition-delay: 0.24s; }
+    .pricing.in .pricing__amount .ch:nth-child(4) { transform: none; transition-delay: 0.31s; }
+    .pricing.in .pricing__amount .ch:nth-child(5) { transform: none; transition-delay: 0.38s; }
+    .pricing.in .pricing__amount .ch:nth-child(6) { transform: none; transition-delay: 0.45s; }
+    .pricing.in .pricing__amount .ch:nth-child(7) { transform: none; transition-delay: 0.52s; }
+    .pricing.in .pricing__amount .ch:nth-child(8) { transform: none; transition-delay: 0.59s; }
+
+    .pricing__sub {
+      font-size: 12px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: #444; margin-bottom: 44px;
+      opacity: 0; transition: opacity 0.5s ease 0.7s;
+    }
+    .pricing.in .pricing__sub { opacity: 1; }
+
+    /* botón WA principal */
+    .btn-wa-main {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--wa); color: #fff;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
+      text-decoration: none;
+      padding: 16px 32px;
+      width: 100%; max-width: 380px; justify-content: center;
+      opacity: 0; transform: translateY(12px);
+      transition: opacity 0.5s ease 0.8s, transform 0.5s ease 0.8s, filter 0.2s;
+    }
+    .btn-wa-main.in  { opacity: 1; transform: none; }
+    .btn-wa-main:hover { filter: brightness(0.9); }
+    .btn-wa-main svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+    .pricing__logistics {
+      margin-top: 16px;
+      font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #353530;
+    }
+
+    /* ── FOOTER ────────────────────────────────────────── */
+    footer {
+      padding: 28px 24px;
+      border-top: 1px solid #1c1c1c;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer__brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px; letter-spacing: 0.12em; color: var(--blanco);
+    }
+    .footer__copy {
+      font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: #2a2a2a;
+    }
+
+    /* ── STICKY WA ─────────────────────────────────────── */
+    .wa-float {
+      position: fixed; bottom: 24px; right: 24px;
+      z-index: 1000;
+      width: 50px; height: 50px;
+      background: var(--wa);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      opacity: 0;
+      animation: fadeIn 0.5s ease forwards 2.2s;
+      transition: transform 0.2s var(--expo);
+    }
+    /* anillo de pulso periódico */
+    .wa-float::before {
+      content: '';
+      position: absolute; inset: 0;
+      border: 2px solid var(--wa);
+      animation: waPulse 3s ease-out infinite 3s;
+    }
+    .wa-float:hover { transform: scale(1.1); }
+    .wa-float svg { width: 24px; height: 24px; fill: #fff; position: relative; z-index: 1; }
+
+    /* ── KEYFRAMES ─────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: none; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes scaleX {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+    @keyframes letterUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: none; }
+    }
+    @keyframes scrollBar {
+      0%   { transform: translateY(-100%); }
+      100% { transform: translateY(200%); }
+    }
+    @keyframes glitchA {
+      0%, 87%, 100% { opacity: 0; transform: none; clip-path: inset(40% 0 50% 0); }
+      88% { opacity: 0.75; transform: translate(-3px, 0); clip-path: inset(20% 0 65% 0); }
+      90% { opacity: 0.75; transform: translate(3px, 0);  clip-path: inset(65% 0 10% 0); }
+      92% { opacity: 0; }
+    }
+    @keyframes glitchB {
+      0%, 88%, 100% { opacity: 0; transform: none; clip-path: inset(55% 0 30% 0); }
+      89% { opacity: 0.55; transform: translate(4px, 0);  clip-path: inset(45% 0 40% 0); }
+      91% { opacity: 0.55; transform: translate(-2px, 0); clip-path: inset(10% 0 75% 0); }
+      93% { opacity: 0; }
+    }
+    @keyframes waPulse {
+      0%   { transform: scale(1); opacity: 0.7; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    /* ── RESPONSIVE ────────────────────────────────────── */
+    @media (min-width: 640px) {
+      .hero__content        { padding: 0 40px 56px; }
+      .story, .process, .pricing { padding: 100px 48px; }
+      .details__header      { padding: 80px 48px 32px; }
+      .details__grid        { grid-template-columns: repeat(4, 1fr); }
+      footer                { padding: 32px 48px; }
+    }
+
+    /* ── REDUCED MOTION ────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .hero__wordmark .l,
+      .hero__kicker, .hero__rule, .hero__tagline, .btn-hero,
+      .scroll-hint, .wa-float { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero__bg" id="hero-bg"></div>
+    <div class="hero__fade"></div>
+
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-hint__bar"></div>
+    </div>
+
+    <div class="hero__content">
+      <p class="hero__kicker"><span id="serial-num">#000</span> — Edición Fundadores</p>
+      <div class="hero__rule"></div>
+      <h1 class="hero__wordmark" data-text="FERROLD">
+        <span class="l">F</span><span class="l">E</span><span class="l">R</span><span class="l">R</span><span class="l">O</span><span class="l">L</span><span class="l">D</span>
+      </h1>
+      <p class="hero__tagline">La cava que sí pensaron.</p>
+      <a href="https://wa.me/57XXXXXXXXXX" class="btn-hero" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <span>Escribir por WhatsApp</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── STORY ── -->
+  <section class="story">
+    <p class="sec-label">El origen</p>
+    <div class="sec-rule"></div>
+    <h2 class="story__headline">
+      <span class="line">El metal</span>
+      <span class="line">que nadie</span>
+      <span class="line">quería.</span>
+    </h2>
+    <p class="story__body">
+      La mayoría de las cavas dicen lo mismo sobre quien las tiene. Nada.<br><br>
+      Este cilindro pasó años en un cuarto de máquinas. Lo retiraron de servicio — ya no era útil para nadie.
+      <strong>Lo intervenimos a mano, sin moldes, sin prisa.</strong> Y lo convertimos en lo más interesante
+      que va a aparecer en tu próxima reunión.<br><br>
+      No hay dos iguales. Nunca las habrá.
+    </p>
+  </section>
+
+  <!-- ── DETAILS ── -->
+  <section class="details">
+    <div class="details__header">
+      <p class="sec-label">El objeto</p>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="details__grid">
+      <div class="detail-cell">
+        <div class="detail-cell__img"><img src="./assets/images/ferrold-placa.jpg" alt="Placa numerada FERROLD" style="object-position:center center;"></div>
+        <span class="detail-cell__label">Identidad</span>
+        <span class="detail-cell__name">Placa numerada</span>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-cell__img"><img src="./assets/images/ferrold-hero.jpg" alt="FERROLD en acción" style="object-position:center 30%;"></div>
+        <span class="detail-cell__label">Apertura</span>
+        <span class="detail-cell__name">Bisagra + cierre</span>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-cell__img"><img src="./assets/images/ferrold-hero.jpg" alt="FERROLD cargado" style="object-position:center 60%;"></div>
+        <span class="detail-cell__label">Función</span>
+        <span class="detail-cell__name">Aislado térmico</span>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-cell__img"><img src="./assets/images/ferrold-hero.jpg" alt="FERROLD en la mesa" style="object-position:right center;"></div>
+        <span class="detail-cell__label">Entrega</span>
+        <span class="detail-cell__name">Caja kraft</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROCESS ── -->
+  <section class="process">
+    <p class="sec-label">Cómo funciona</p>
+    <div class="sec-rule"></div>
+    <div class="steps">
+      <div class="step">
+        <span class="step__num">01</span>
+        <div>
+          <p class="step__title">Escríbenos</p>
+          <p class="step__desc">Por WhatsApp. Confirmamos disponibilidad y acordamos los detalles de tu cava.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step__num">02</span>
+        <div>
+          <p class="step__title">Tu cilindro despierta</p>
+          <p class="step__desc">Desde ese momento, es solo tuyo. Entra a proceso con el 50% de anticipo — el saldo lo pagas al recibir.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step__num">03</span>
+        <div>
+          <p class="step__title">Llega con historia</p>
+          <p class="step__desc">Recibes tu FERROLD con número de serie, tarjeta de origen y caja kraft. 7–14 días hábiles.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PRICING ── -->
+  <section class="pricing">
+    <p class="sec-label">Precio</p>
+    <div class="sec-rule"></div>
+    <p class="pricing__currency">COP</p>
+    <p class="pricing__amount">
+      <span class="ch">$</span><span class="ch">4</span><span class="ch">2</span><span class="ch">0</span><span class="ch">.</span><span class="ch">0</span><span class="ch">0</span><span class="ch">0</span>
+    </p>
+    <p class="pricing__sub">No es el precio de una cava. Es el precio de la única.</p>
+    <p class="pricing__sub" style="opacity:0.45;font-size:0.85em;margin-top:4px;">Anticipo 50% al reservar · Saldo al entregar</p>
+    <a href="https://wa.me/57XXXXXXXXXX" class="btn-wa-main" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Quiero la mía — WhatsApp
+    </a>
+    <p class="pricing__logistics">Envíos a todo Colombia · 7–14 días hábiles</p>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <span class="footer__brand">FERROLD</span>
+    <span class="footer__copy">Bucaramanga, Colombia</span>
+  </footer>
+
+  <!-- ── STICKY WA ── -->
+  <a href="https://wa.me/57XXXXXXXXXX" class="wa-float" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <script>
+    const isHover = window.matchMedia('(hover: hover)').matches;
+
+    /* ── CUSTOM CURSOR ── */
+    const cur = document.getElementById('cursor');
+    if (isHover) {
+      document.addEventListener('mousemove', e => {
+        cur.style.left = e.clientX + 'px';
+        cur.style.top  = e.clientY + 'px';
+      });
+      document.querySelectorAll('a, button').forEach(el => {
+        el.addEventListener('mouseenter', () => cur.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cur.classList.remove('hover'));
+      });
+    }
+
+    /* ── PARALLAX HERO (desktop) ── */
+    if (isHover) {
+      const bg  = document.getElementById('hero-bg');
+      const img = document.getElementById('hero-img');
+      window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        bg.style.transform  = `translateY(${y * 0.22}px)`;
+        img.style.transform = `translateY(${y * 0.12}px)`;
+      }, { passive: true });
+    }
+
+    /* ── SERIAL COUNTER (#000 → #001) ── */
+    setTimeout(() => {
+      const el = document.getElementById('serial-num');
+      let n = 0;
+      const run = () => {
+        n++;
+        el.textContent = '#' + String(n).padStart(3, '0');
+        if (n < 1) requestAnimationFrame(run);
+      };
+      requestAnimationFrame(run);
+    }, 350);
+
+    /* ── INTERSECTION OBSERVER ── */
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const s = e.target;
+
+        s.querySelectorAll('.sec-label, .sec-rule').forEach(x => x.classList.add('in'));
+
+        const hl = s.querySelector('.story__headline');
+        if (hl) hl.classList.add('in');
+
+        const body = s.querySelector('.story__body');
+        if (body) body.classList.add('in');
+
+        s.querySelectorAll('.detail-cell').forEach(c => c.classList.add('in'));
+        s.querySelectorAll('.step').forEach(st => st.classList.add('in'));
+
+        if (s.classList.contains('pricing')) {
+          s.classList.add('in');
+          s.querySelector('.btn-wa-main')?.classList.add('in');
+        }
+
+        io.unobserve(s);
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.story, .details, .process, .pricing').forEach(s => io.observe(s));
+  </script>
+
+</body>
+</html>
